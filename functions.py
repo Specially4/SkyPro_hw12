@@ -1,6 +1,6 @@
 import json
 from json import JSONDecodeError
-
+from path_file import POST_PATH, UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
@@ -12,44 +12,37 @@ def is_filename_allowed(filename):
     return False
 
 
-def load_json(arg):
+def load_json():
     """
     Данная функция проверяет получиться ли прочитать и открыть файл JSON
     """
-    try:
-        with open(arg, "r", encoding="utf-8") as file:
-            post = json.load(file)
-        return post
-    except FileNotFoundError:
-        return "Файл JSON не найден"
-    except JSONDecodeError:
-        return "Не удалось прочитать файл JSON"
+    with open(POST_PATH, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
-def search(arg, path):
+def search(arg: str):
     """
     Данная функция выполняет поиск по файлу полученному JSON
     """
     dict_content = []
-    with open(path, "r", encoding="utf-8") as file:
-        post = json.load(file)
-
+    post = load_json()
     for item in post:
-        if arg in item["content"]:
+        if arg.lower() in item["content"].lower():
             dict_content.append(item)
         else:
             continue
     return dict_content
 
 
-def upload_post(path_json, path, text):
+def upload_post(path, text):
     """
     Данная функция загружает в JSON пост пользователя
     """
-    data = load_json(path_json)
+    data = load_json()
     with open("posts.json", "w", encoding="utf-8") as file:
         dict_post ={}
         dict_post["pic"] = path
         dict_post["content"] = text
         data.append(dict_post)
         json.dump(data, file, indent=2, ensure_ascii=False)
+
