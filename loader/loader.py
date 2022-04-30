@@ -19,7 +19,7 @@ def page_post_upload():
         text = request.form["content"]
         filename = picture.filename
         if is_filename_allowed(filename):
-            picture.save(filename)
+            picture.save(f'./uploads/images/{filename}')
             upload_post(filename, text)
             return render_template("post_uploaded.html", filename=filename, content=text)
         else:
